@@ -28,14 +28,12 @@ func register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	username := c.PostForm("username")
-	userPassword := c.PostForm("password")
 	user := model.User{
-		Username:     username,
-		UserPassword: userPassword,
+		Username:     c.PostForm("username"),
+		UserPassword: c.PostForm("password"),
 	}
 
-	err := service.IsRepeatUsername(user.Username)
+	_, err := service.IsRepeatUsername(user.Username)
 	if err != nil {
 		if err != sql.ErrNoRows {
 			fmt.Println("ERROR:", err)
@@ -47,13 +45,72 @@ func Login(c *gin.Context) {
 		}
 	}
 
-	is := service.IsUserCorrect(user)
+	is := service.IsUserCorrect(&user)
 
-	if !is {
+	if is == false {
 		tool.RespErrorWithDate(c, "您的密码错误!")
 		return
 	}
-
-	c.SetCookie("username", username, 3600, "/", "", false, true)
+	fmt.Println(user)
+	c.SetCookie("username", user.Username, 3600, "/", "", false, true)
+	c.SetCookie("id", user.Id, 3600, "/", "", false, true)
 	tool.RespSuccessful(c)
+}
+
+func AddMB(c *gin.Context) {
+	id, _ := c.Cookie("id")
+	mb := model.MiBao{
+		Id:     id,
+		Mb1:    c.PostForm("mb1"),
+		Mb1pwd: c.PostForm("mb1pwd"),
+		Mb2:    c.PostForm("mb2"),
+		Mb2pwd: c.PostForm("mb2pwd"),
+	}
+	if mb.Mb1 == "" || mb.Mb2 == "" || mb.Mb1pwd == "" || mb.Mb2pwd == "" {
+		tool.RespErrorWithDate(c, "值不能为空！")
+		return
+	}
+	err := service.AddMB(mb)
+	if err != nil {
+		fmt.Println(err)
+		tool.RespErrorWithDate(c, "您已经存在密保啦！")
+		return
+	}
+	tool.RespSuccessfullWithDate(c, "添加成功！")
+}
+
+func CheckMB(c *gin.Context) {
+	id, _ := c.Cookie("id")
+	mb := model.MiBao{Id: id}
+	imb, err := service.CheckMB(mb)
+	if err != nil {
+		tool.RespErrorWithDate(c, "您还没有密保哟~")
+		return
+	}
+	tool.RespSuccessfullWithDate(c, imb)
+}
+
+func ChangePassword(c *gin.Context) {
+	user := model.User{Username: c.PostForm("username")}
+	iuser, err := service.IsRepeatUsername(user.Username)
+	if err != nil {
+		tool.RespErrorWithDate(c, "账号不存在！")
+	}
+	pwd := c.PostForm("password")
+	mb := model.MiBao{
+		Id:     iuser.Id,
+		Mb1pwd: c.PostForm("mb1pwd"),
+		Mb2pwd: c.PostForm("mb2pwd"),
+	}
+	is, err1 := service.ChangePassword(mb, pwd)
+	if err1 != nil {
+		tool.RespInternalError(c)
+		return
+	}
+	if is != true {
+		tool.RespErrorWithDate(c, "密保答案错误！")
+		return
+	} else {
+		tool.RespSuccessfullWithDate(c, "修改成功！")
+	}
 }
