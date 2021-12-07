@@ -10,7 +10,7 @@ func InitEngine() {
 	user := engine.Group("/user")
 	{
 		user.POST("/register", register)
-		user.PUT("/login", Login)
+		user.POST("/login", Login)
 		engine.PUT("/changePassword", ChangePassword)
 	}
 
@@ -20,5 +20,18 @@ func InitEngine() {
 		mibaoSystem.GET("/check", auth, CheckMB)
 	}
 
+	post := engine.Group("/post", auth)
+	{
+		post.POST("/", Post)
+		//post.PUT("/modify", Modify)
+		//post.GET("/view", View)
+	}
+
+	comment := engine.Group("/comment", auth)
+	{
+		comment.POST("/")
+		comment.PUT("/modify")
+		comment.GET("/view")
+	}
 	_ = engine.Run()
 }
