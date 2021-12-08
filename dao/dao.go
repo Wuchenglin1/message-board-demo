@@ -8,7 +8,7 @@ import (
 var dB *sql.DB
 
 func InitMySql() {
-	db, err := sql.Open("mysql", "root:root@/test")
+	db, err := sql.Open("mysql", "root:root@/test?parseTime=true")
 	if err != nil {
 		panic(err)
 	}

@@ -12,7 +12,7 @@ func auth(c *gin.Context) {
 		tool.RespErrorWithDate(c, "请登录后进行操作")
 		c.Abort()
 	}
-
+	tool.RespSuccessfullWithDate(c, "您好！"+username)
 	c.Set("id", id)
 	c.Set("username", username)
 	c.Next()

@@ -25,7 +25,6 @@ func RespSuccessful(c *gin.Context) {
 
 func RespSuccessfullWithDate(c *gin.Context, date interface{}) {
 	c.JSON(http.StatusOK, gin.H{
-		"info": "成功",
 		"date": date,
 	})
 }
