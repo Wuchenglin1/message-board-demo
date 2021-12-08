@@ -12,7 +12,7 @@ func InitEngine() {
 	{
 		user.POST("/register", register)
 		user.POST("/login", Login)
-		engine.PUT("/changePassword", ChangePassword)
+		user.PUT("/changePassword", ChangePassword)
 	}
 
 	//密保系统
@@ -25,21 +25,23 @@ func InitEngine() {
 	//留言系统
 	post := engine.Group("/post", auth)
 	{
-		post.GET("/", ViewAll)
-		post.POST("/", Post)
-		post.PUT("/", Modify)
-		post.DELETE("/", Delete)
-		post.POST("/view", View)
+		post.GET("/", ViewAll)   //查看所有留言
+		post.POST("/", Post)     //发送留言
+		post.PUT("/", Modify)    //修改留言
+		post.DELETE("/", Delete) //删除留言
+		post.POST("/view", View) //按username或者receiveName来查找留言
 
 	}
 
 	//评论系统
 	comment := engine.Group("/comment", auth)
 	{
-		comment.POST("/")
-		comment.PUT("/")
-		comment.GET("/")
-		comment.DELETE("/")
+		comment.POST("/p", CommentPost)    //评论留言
+		comment.POST("/c", CommentComment) //评论套娃
+		comment.PUT("/", CommentModify)    //修改评论
+		comment.GET("/")                   //查找评论
+		//comment.GET("/all", CommentViewAll) //查看所有评论
+		comment.DELETE("/", CommentDelete) //删除评论
 	}
 	_ = engine.Run()
 }

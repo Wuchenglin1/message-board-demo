@@ -31,11 +31,11 @@ func PostView(post model.Post, num int) (map[int]model.Post, bool, error) {
 	ipost := model.Post{}
 	switch num {
 	case 0:
-		rows, err = dB.Query("select id,name,receive,detail,comments,time from post where id > ?", 0)
+		rows, err = dB.Query("select id,name,receive,detail,comment_num,time from post where id > ?", 0)
 	case 1:
-		rows, err = dB.Query("select id,name,receive,detail,comments,time from post where receive = ?", post.Receive)
+		rows, err = dB.Query("select id,name,receive,detail,comment_num,time from post where receive = ?", post.Receive)
 	case 2:
-		rows, err = dB.Query("select id,name,receive,detail,comments,time from post where name = ?", post.Name)
+		rows, err = dB.Query("select id,name,receive,detail,comment_num,time from post where name = ?", post.Name)
 	}
 	if err != nil {
 		fmt.Println(err)
@@ -45,7 +45,7 @@ func PostView(post model.Post, num int) (map[int]model.Post, bool, error) {
 		_ = rows.Close()
 	}()
 	for rows.Next() {
-		err = rows.Scan(&ipost.Id, &ipost.Name, &ipost.Receive, &ipost.Detail, &ipost.Comments, &ipost.Time)
+		err = rows.Scan(&ipost.Id, &ipost.Name, &ipost.Receive, &ipost.Detail, &ipost.Comment_num, &ipost.Time)
 		if err != nil {
 			fmt.Println(err)
 			return postMap, true, err

@@ -11,13 +11,13 @@ import (
 	"time"
 )
 
-// Post 没有对字数的检测
+// Post 需要两个key:to(接收者)和detail(内容)
 func Post(c *gin.Context) {
 	name, _ := c.Cookie("username")
 	post := model.Post{
 		Name:    name,
 		Receive: c.PostForm("to"),
-		Detail:  c.PostForm("post"),
+		Detail:  c.PostForm("detail"),
 		Time:    time.Now().Add(time.Hour * 8),
 	}
 	fmt.Println(post.Time)
@@ -35,6 +35,7 @@ func Post(c *gin.Context) {
 	tool.RespSuccessfullWithDate(c, "发送成功！")
 }
 
+// Modify 需要两个key:id(想要修改留言的id)和detail(新的修改的内容)
 func Modify(c *gin.Context) {
 	name, _ := c.Cookie("username")
 	id, _ := strconv.Atoi(c.PostForm("id"))
@@ -55,6 +56,7 @@ func Modify(c *gin.Context) {
 	tool.RespSuccessfullWithDate(c, "修改成功！")
 }
 
+// Delete 需要一个key:id(要被删除的留言id)
 func Delete(c *gin.Context) {
 	id, _ := strconv.Atoi(c.PostForm("id"))
 	post := model.Post{
@@ -68,6 +70,7 @@ func Delete(c *gin.Context) {
 	tool.RespSuccessfullWithDate(c, "删除成功！")
 }
 
+// View 需要一个key:username(发送者的name)或者receiveName(接收者的name)
 func View(c *gin.Context) {
 	var num int
 	post := model.Post{
@@ -97,6 +100,7 @@ func View(c *gin.Context) {
 	}
 }
 
+// ViewAll 直接查看所有留言
 func ViewAll(c *gin.Context) {
 	post := model.Post{}
 	postMap, _, err := service.PostView(post, 0)
