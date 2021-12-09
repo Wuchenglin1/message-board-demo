@@ -1,0 +1,41 @@
+
+create database test;
+
+use test;
+
+create table user(
+id int primary key auto_increment,
+name varchar(20) not null,
+password varchar(60) not null,
+unique(name)
+);
+
+create table mibao(
+id int primary key,
+mb1 varchar(35) not null,
+mb1pwd varchar(35) not null,
+mb2 varchar(35) not null,
+mb2pwd varchar(35) not null,
+foreign key(id) references user(id)
+);
+
+create table post
+(
+    id      int         auto_increment not null ,
+    name    varchar(20) not null,
+    receive varchar(20) not null,
+    detail  varchar(45) not null,
+    comment_num int default 0 not null ,
+    time    datetime        not null,
+    primary key (id)
+);
+
+create table comments(
+    pId int not null ,
+    id int primary key auto_increment not null ,
+    postId int,
+    name varchar(20),
+    comment varchar(45) not null ,
+    comment_num int default 0,
+    time datetime
+);
