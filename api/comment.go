@@ -20,6 +20,10 @@ func CommentPost(c *gin.Context) {
 		Comment:  c.PostForm("comment"),
 		Time:     time.Now().Add(time.Hour * 8),
 	}
+	if len(comment.Comment) >= 20 {
+		tool.RespErrorWithDate(c, "评论长度过长！")
+		return
+	}
 	is, err := service.CommentPost(comment)
 	if is == false {
 		tool.RespErrorWithDate(c, "该留言不存在！")
@@ -42,6 +46,10 @@ func CommentComment(c *gin.Context) {
 		Pid:      pid,
 		Comment:  c.PostForm("comment"),
 		Time:     time.Now().Add(time.Hour * 8),
+	}
+	if len(comments.Comment) >= 20 {
+		tool.RespErrorWithDate(c, "评论长度过长！")
+		return
 	}
 
 	is, err := service.CommentComment(comments)

@@ -20,6 +20,10 @@ func Post(c *gin.Context) {
 		Detail:  c.PostForm("detail"),
 		Time:    time.Now().Add(time.Hour * 8),
 	}
+	if len(post.Detail) >= 20 {
+		tool.RespErrorWithDate(c, "留言长度过长！")
+		return
+	}
 	fmt.Println(post.Time)
 	_, err := service.IsRepeatUsername(post.Receive)
 	if err != nil {
@@ -43,6 +47,10 @@ func Modify(c *gin.Context) {
 		Name:   name,
 		Detail: c.PostForm("detail"),
 		Id:     id,
+	}
+	if len(post.Detail) >= 20 {
+		tool.RespErrorWithDate(c, "留言长度过长！")
+		return
 	}
 	err := service.PostModify(post)
 	if err != nil {
