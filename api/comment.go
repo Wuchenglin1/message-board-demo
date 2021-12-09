@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"message-board-demo/model"
 	"message-board-demo/service"
@@ -71,12 +72,14 @@ func CommentModify(c *gin.Context) {
 }
 
 // CommentDelete 删除评论需要1个key:id(删除评论的id)
+//这里我采用的是覆盖评论，就将内容覆盖成“该内容已删除”,其他的东西就不动了
 func CommentDelete(c *gin.Context) {
 	id, _ := strconv.Atoi(c.PostForm("id"))
 	name, _ := c.Cookie("username")
 	comments := model.Comments{
 		Id:       id,
 		UserName: name,
+		Comment:  "已删除",
 	}
 	err := service.CommentDelete(comments)
 	if err != nil {
@@ -85,4 +88,31 @@ func CommentDelete(c *gin.Context) {
 	}
 	tool.RespSuccessfullWithDate(c, "删除成功！")
 
+}
+
+// CommentView 需要传入一个key:id(该评论的id)
+func CommentView(c *gin.Context) {
+	id, _ := strconv.Atoi(c.PostForm("id"))
+	comment := model.Comments{Id: id}
+
+	//先通过id把该评论的详情给赋值出来
+	err := service.CommentViewOne(&comment)
+	tool.RespSuccessfullWithDate(c, comment)
+	//检测该评论是否存在
+	if err != nil {
+		tool.RespErrorWithDate(c, "评论不存在！")
+		return
+	}
+	//命名一个存comment的map
+	commentMap := map[int]model.Comments{}
+	//通过 子评论的pid=该评论的id 来查询他的所有子评论
+	icommentMap, err1 := service.CommentView(comment, commentMap)
+	if err != nil {
+		fmt.Println(err1)
+		tool.RespErrorWithDate(c, "啊嘞嘞，出现错误了诶~")
+		return
+	}
+	for _, v := range icommentMap {
+		tool.RespSuccessfullWithDate(c, v)
+	}
 }

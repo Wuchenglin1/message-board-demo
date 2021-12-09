@@ -24,3 +24,13 @@ func CommentDelete(comments model.Comments) error {
 	err := dao.CommentDelete(comments)
 	return err
 }
+
+func CommentViewOne(comment *model.Comments) error {
+	err := dao.CommentViewOne(comment)
+	return err
+}
+
+func CommentView(comment model.Comments, commentMap map[int]model.Comments) (map[int]model.Comments, error) {
+	icommentMap, err := dao.CommentView(comment, commentMap)
+	return icommentMap, err
+}

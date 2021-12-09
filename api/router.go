@@ -39,8 +39,7 @@ func InitEngine() {
 		comment.POST("/p", CommentPost)    //评论留言
 		comment.POST("/c", CommentComment) //评论套娃
 		comment.PUT("/", CommentModify)    //修改评论
-		comment.GET("/")                   //查找评论
-		//comment.GET("/all", CommentViewAll) //查看所有评论
+		comment.POST("/", CommentView)     //查找评论(以及他的子评论)
 		comment.DELETE("/", CommentDelete) //删除评论
 	}
 	_ = engine.Run()
