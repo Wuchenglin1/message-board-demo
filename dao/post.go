@@ -23,6 +23,35 @@ func PostModify(post model.Post) error {
 	return err
 }
 
+func PostViewById(post *model.Post) error {
+	err := dB.QueryRow("select name,receive,detail,comment_num,time from post where id = ?", post.Id).Scan(&post.Name, &post.Receive, &post.Detail, &post.Comment_num, &post.Time)
+	return err
+}
+
+//func PostViewComments(comment model.Comments, commentMap map[int]model.Comments) (map[int]model.Comments, error) {
+//	rows, err := dB.Query("select pId,id,name,comment,comment_num,time from comments where pId = ?", comment.Id)
+//	fmt.Println("err3", err)
+//	if err != nil {
+//		return commentMap, err
+//	}
+//	defer rows.Close()
+//	for rows.Next() {
+//		sc := model.Comments{}
+//		err = rows.Scan(&sc.Pid, &sc.Id, &sc.UserName, &sc.Comment, &sc.Comment_Num, &sc.Time)
+//		fmt.Println("err", i, err)
+//		commentMap[i] = sc
+//		i++
+//		if err != nil {
+//			return commentMap, err
+//		}
+//		commentMap, err = CommentView(sc, commentMap)
+//		if err != nil {
+//			return commentMap, err
+//		}
+//	}
+//	return commentMap, nil
+//}
+
 func PostView(post model.Post, num int) (map[int]model.Post, bool, error) {
 	//我选择用一个map来存储所有查询到的留言,用数字来判断查询的类型
 	var err error

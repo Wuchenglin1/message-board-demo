@@ -11,7 +11,9 @@ func auth(c *gin.Context) {
 	if err != nil {
 		tool.RespErrorWithDate(c, "请登录后进行操作")
 		c.Abort()
+		return
 	}
+
 	tool.RespSuccessfullWithDate(c, "您好！"+username)
 	c.Set("id", id)
 	c.Set("username", username)

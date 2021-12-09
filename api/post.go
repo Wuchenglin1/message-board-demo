@@ -70,37 +70,28 @@ func Delete(c *gin.Context) {
 	tool.RespSuccessfullWithDate(c, "删除成功！")
 }
 
-// View 需要一个key:username(发送者的name)或者receiveName(接收者的name)
+// View 需要一个key:留言的id
 func View(c *gin.Context) {
-	var num int
-	post := model.Post{
-		Name:    c.PostForm("username"),
-		Receive: c.PostForm("receiveName"),
-	}
-	if post.Name == "" && post.Receive == "" {
-		tool.RespErrorWithDate(c, "请输入正确的名字username或receiveName")
-		return
-	}
-	if post.Name == "" {
-		num = 1
-	} else {
-		num = 2
-	}
-	postMap, is, err := service.PostView(post, num)
+	id, _ := strconv.Atoi(c.PostForm("id"))
+	post := model.Post{Id: id}
+	//查询一条留言的所有信息并赋值
+	err := service.PostViewById(&post)
 	if err != nil {
-		tool.RespInternalError(c)
+		tool.RespErrorWithDate(c, "该留言不存在！")
 		return
 	}
-	if is == true {
-		tool.RespErrorWithDate(c, "该用户还没有（收到）留言！")
-		return
-	}
-	for _, v := range postMap {
-		tool.RespSuccessfullWithDate(c, v)
+	comment := model.Comments{PostPid: id}
+	commentMap := map[int]model.Comments{}
+	commentSlice, _ := service.PostView2(comment, commentMap)
+	fmt.Println(commentSlice)
+	for _, v1 := range commentSlice {
+		for _, v2 := range v1 {
+			tool.RespSuccessfullWithDate(c, v2)
+		}
 	}
 }
 
-// ViewAll 直接查看所有留言
+// ViewAll 直接查看所有留言(没有评论)
 func ViewAll(c *gin.Context) {
 	post := model.Post{}
 	postMap, _, err := service.PostView(post, 0)

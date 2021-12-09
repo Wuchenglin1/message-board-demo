@@ -9,6 +9,7 @@ import (
 	"message-board-demo/tool"
 )
 
+//需要传入两个key:username和password
 func register(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
@@ -27,12 +28,12 @@ func register(c *gin.Context) {
 	tool.RespSuccessfullWithDate(c, "注册成功！")
 }
 
+// Login 需要传入两个key:username和password
 func Login(c *gin.Context) {
 	user := model.User{
 		Username:     c.PostForm("username"),
 		UserPassword: c.PostForm("password"),
 	}
-
 	_, err := service.IsRepeatUsername(user.Username)
 	if err != nil {
 		if err != sql.ErrNoRows {
@@ -54,9 +55,11 @@ func Login(c *gin.Context) {
 	fmt.Println(user)
 	c.SetCookie("username", user.Username, 3600, "/", "", false, true)
 	c.SetCookie("id", user.Id, 3600, "/", "", false, true)
-	tool.RespSuccessful(c)
+	tool.RespSuccessfullWithDate(c, "登录成功！")
+
 }
 
+// AddMB 需要传入4个key：mb1,mb1pwd和mb2,mb2pwd
 func AddMB(c *gin.Context) {
 	id, _ := c.Cookie("id")
 	mb := model.MiBao{
@@ -90,6 +93,7 @@ func CheckMB(c *gin.Context) {
 	tool.RespSuccessfullWithDate(c, imb)
 }
 
+// ChangePassword 需要传入3个key:username(想要修改名字的username)和mb1pwd,mb2pwd(两个密保的密码)
 func ChangePassword(c *gin.Context) {
 	user := model.User{Username: c.PostForm("username")}
 	iuser, err := service.IsRepeatUsername(user.Username)

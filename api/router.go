@@ -18,8 +18,8 @@ func InitEngine() {
 	//密保系统
 	mibaoSystem := engine.Group("/mibao")
 	{
-		mibaoSystem.POST("/add", auth, AddMB)
-		mibaoSystem.GET("/check", auth, CheckMB)
+		mibaoSystem.POST("/add", auth, AddMB)    //添加密保
+		mibaoSystem.GET("/check", auth, CheckMB) //查看密保
 	}
 
 	//留言系统
@@ -29,7 +29,7 @@ func InitEngine() {
 		post.POST("/", Post)     //发送留言
 		post.PUT("/", Modify)    //修改留言
 		post.DELETE("/", Delete) //删除留言
-		post.POST("/view", View) //按username或者receiveName来查找留言
+		post.POST("/view", View) //
 
 	}
 

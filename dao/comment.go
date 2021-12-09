@@ -47,6 +47,30 @@ func CommentViewOne(comment *model.Comments) error {
 	return err
 }
 
+func CommentViewByPostId(comment model.Comments, commentMap map[int]model.Comments) ([]map[int]model.Comments, error) {
+	rows, err := dB.Query("select pId,id,name,comment,comment_num,time from comments where postId = ?", comment.PostPid)
+	//声明一个切片来存各个commentMap
+	var slice []map[int]model.Comments
+	defer rows.Close()
+	if err != nil {
+		return slice, err
+	}
+	for rows.Next() {
+		icomment := model.Comments{}
+		err = rows.Scan(&icomment.Pid, &icomment.Id, &icomment.UserName, &icomment.Comment, &icomment.Comment_Num, &icomment.Time)
+		//借用查看comment的方法来遍历评论
+		commentMap, err = CommentView(icomment, commentMap)
+		//先把首个评论放进map里面
+		commentMap[0] = icomment
+		slice = append(slice, commentMap)
+		i++
+		if err != nil {
+			return slice, err
+		}
+	}
+	return slice, nil
+}
+
 //为了方便存储，我命名了个全局变量i
 var i = 1
 
