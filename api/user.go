@@ -13,7 +13,10 @@ import (
 func register(c *gin.Context) {
 	username := c.PostForm("username")
 	password := c.PostForm("password")
-
+	if len(username) <= 6 || len(password) <= 6 {
+		tool.RespErrorWithDate(c, "非法输入：账号和密码长度需要大于六位！")
+		return
+	}
 	user := model.User{
 		Username:     username,
 		UserPassword: password,
