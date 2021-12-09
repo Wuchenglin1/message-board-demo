@@ -1,4 +1,4 @@
-# message-board-demo新增功能：
+# message-board-demo说明：
 
 #1.关于评论套娃
 我去看了达达子的评论套娃QAQ，模仿着做的一个
